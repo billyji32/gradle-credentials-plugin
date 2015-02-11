@@ -11,9 +11,10 @@ buildscript {
 apply plugin: 'groovy'
 apply plugin: 'nu.studer.plugindev'
 apply plugin: 'nu.studer.credentials'
+apply plugin: 'idea'
 
 group = 'nu.studer'
-version = '1.0.2.DEV'
+version = '1.0.2.RT'
 
 dependencies {
   compile "nu.studer:java-ordered-properties:$orderedPropertiesVersion"
@@ -40,4 +41,4 @@ bintray {
   dryRun = true
 }
 
-wrapper.gradleVersion = '1.12'
+wrapper.gradleVersion = '2.2.1'
