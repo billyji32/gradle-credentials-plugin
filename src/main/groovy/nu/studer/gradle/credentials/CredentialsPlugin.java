@@ -9,6 +9,7 @@ import org.gradle.api.Project;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Map;
 
@@ -41,6 +42,13 @@ public class CredentialsPlugin implements Plugin<Project> {
 
     @Override
     public void apply(Project project) {
+        try
+        {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        }
+        catch(Exception e){
+        }
+
         // get the passphrase from the project properties, otherwise use the default passphrase
         String passphrase = getProjectProperty(CREDENTIALS_PASSPHRASE_PROPERTY, DEFAULT_PASSPHRASE, project);
 
@@ -53,10 +61,6 @@ public class CredentialsPlugin implements Plugin<Project> {
         // create a credentials persistence manager that operates on the credentials file
         File gradleUserHomeDir = project.getGradle().getGradleUserHomeDir();
         File credentialsFile = new File(gradleUserHomeDir, credentialsFileName);
-
-        if(project.hasProperty("credentialsFile")) {
-            credentialsFile = project.file(project.getProperties().get("credentialsFile"));
-        }
 
         CredentialsPersistenceManager credentialsPersistenceManager = new CredentialsPersistenceManager(credentialsFile);
 
@@ -88,7 +92,7 @@ public class CredentialsPlugin implements Plugin<Project> {
             credentialsFileName = DEFAULT_PASSPHRASE_CREDENTIALS_FILE;
             LOGGER.debug("No explicit passphrase provided. Using default credentials file name: " + credentialsFileName);
         } else {
-            credentialsFileName = "gradle." + MD5.generateMD5Hash(passphrase) + ".encrypted.properties";
+            credentialsFileName = "gradle." + passphrase + ".encrypted.properties";
             LOGGER.debug("Custom passphrase provided. Using credentials file name: " + credentialsFileName);
         }
         return credentialsFileName;

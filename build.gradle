@@ -1,23 +1,34 @@
+
 buildscript {
-  repositories {
-    jcenter()
-  }
+repositories {
+  jcenter()
+}
   dependencies {
     classpath "nu.studer:gradle-plugindev-plugin:$plugindevPluginVersion"
-    classpath "nu.studer:gradle-credentials-plugin:$credentialsPluginVersion"
-  }
+    classpath "nu.studer:gradle-credentials-plugin:$credentialsPluginVersion"}
 }
-
 apply plugin: 'groovy'
 apply plugin: 'nu.studer.plugindev'
 apply plugin: 'nu.studer.credentials'
 
 group = 'nu.studer'
-version = '1.0.2.DEV'
+version = '1.0'
+
+configurations{
+  extraLibs
+}
 
 dependencies {
-  compile "nu.studer:java-ordered-properties:$orderedPropertiesVersion"
+  compile gradleApi()
+  extraLibs "nu.studer:java-ordered-properties:1.0.1"
   testCompile "junit:junit:$junitVersion"
+  configurations.compile.extendsFrom(configurations.extraLibs)
+}
+
+jar {
+  from {
+    configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+  }
 }
 
 plugindev {
@@ -25,19 +36,15 @@ plugindev {
   pluginImplementationClass 'nu.studer.gradle.credentials.CredentialsPlugin'
   pluginLicenses 'Apache-2.0'
   pluginTags 'gradle', 'plugin', 'credentials'
+  pluginId 'gradle-credentials-plugin'
   authorId 'etiennestuder'
   authorName 'Etienne Studer'
   authorEmail 'etienne@studer.nu'
   projectUrl 'https://github.com/etiennestuder/gradle-credentials-plugin'
   projectInceptionYear '2014'
-  done()
 }
 
-bintray {
-  user = credentials.BINTRAY_USER
-  key = credentials.BINTRAY_API_KEY
-  pkg.repo = 'gradle-plugins'
-  dryRun = true
+task wrapper(type: Wrapper) {
+  gradleVersion = '4.2'
+  distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
-
-wrapper.gradleVersion = '1.12'

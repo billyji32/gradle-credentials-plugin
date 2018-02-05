@@ -18,7 +18,7 @@ public final class CredentialsPersistenceManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CredentialsPersistenceManager.class);
 
-    private final File credentialsFile;
+    private File credentialsFile;
 
     public CredentialsPersistenceManager(File credentialsFile) {
         this.credentialsFile = credentialsFile;
@@ -26,6 +26,10 @@ public final class CredentialsPersistenceManager {
 
     public File getCredentialsFile() {
         return new File(credentialsFile.toURI());
+    }
+
+    public void updateCredentialsFile(File credentialsFile) {
+        this.credentialsFile = credentialsFile;
     }
 
     public OrderedProperties readCredentials() {
